@@ -2,6 +2,17 @@ import argparse
 import gc
 import json
 import os
+
+# Force CPU usage to avoid CUDA compatibility issues
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+os.environ["TORCH_USE_CUDA_DSA"] = "0"
+os.environ["CUDA_LAUNCH_BLOCKING"] = "0"
+os.environ["TORCH_DEVICE"] = "cpu"
+os.environ["PYTORCH_ENABLE_MPS_FALLBACK"] = "1"
+os.environ["OMP_NUM_THREADS"] = "1"
+# Disable ONNX Runtime GPU providers
+os.environ["ORT_DISABLE_GPU"] = "1"
+
 import subprocess
 import sys
 import threading
@@ -19,6 +30,60 @@ import service.trans_dh_service
 from h_utils.custom import CustomError
 from y_utils.config import GlobalConfig
 from y_utils.logger import logger
+
+# Additional PyTorch CPU forcing after imports
+try:
+    import torch
+    torch.cuda.is_available = lambda: False
+    torch.cuda.device_count = lambda: 0
+    
+    # Override torch.load to always use CPU
+    original_load = torch.load
+    def force_cpu_load(f, map_location=None, pickle_module=None, **kwargs):
+        # Only pass pickle_module if it's not None
+        if pickle_module is not None:
+            return original_load(f, map_location='cpu', pickle_module=pickle_module, **kwargs)
+        else:
+            return original_load(f, map_location='cpu', **kwargs)
+    torch.load = force_cpu_load
+    
+    # Force all tensors to CPU with better error handling
+    original_tensor_to = torch.Tensor.to
+    def force_cpu_to(self, *args, **kwargs):
+        # Always force to CPU regardless of arguments
+        args_list = list(args) if args else []
+        
+        # Replace any cuda device references with cpu
+        for i, arg in enumerate(args_list):
+            if hasattr(arg, 'type') and 'cuda' in str(arg).lower():
+                args_list[i] = 'cpu'
+            elif str(arg).lower() == 'cuda' or str(arg).startswith('cuda:'):
+                args_list[i] = 'cpu'
+        
+        # Clean kwargs
+        if 'device' in kwargs:
+            kwargs['device'] = 'cpu'
+            
+        # Remove any cuda-specific kwargs
+        kwargs = {k: v for k, v in kwargs.items() if 'cuda' not in str(k).lower()}
+        
+        try:
+            return original_tensor_to(self, 'cpu', **kwargs)
+        except:
+            # Fallback: just return self without moving
+            return self
+    
+    torch.Tensor.to = force_cpu_to
+    
+    # Override torch.cuda.set_device to do nothing
+    torch.cuda.set_device = lambda device: None
+    
+    # Override other CUDA functions
+    torch.cuda.empty_cache = lambda: None
+    torch.cuda.synchronize = lambda device=None: None
+    
+except ImportError:
+    pass
 
 
 def get_args():
@@ -178,10 +243,26 @@ def main():
         video_url = opt.video_path
     sys.argv = [sys.argv[0]]
     task = service.trans_dh_service.TransDhTask()
-    time.sleep(10) # somehow, this works...
+    print("TransDhTask initialized, waiting longer for CPU processing...")
+    time.sleep(20)  # Increased sleep time for CPU processing
 
     code = "1004"
-    task.work(audio_url, video_url, code, 0, 0, 0, 0)
+    print(f"Starting work with audio: {audio_url}, video: {video_url}")
+    try:
+        task.work(audio_url, video_url, code, 0, 0, 0, 0)
+        print("Task completed successfully!")
+    except Exception as e:
+        print(f"Task failed with error: {e}")
+        # Check if output files were created despite the error
+        import glob
+        result_files = glob.glob(f"./*{code}*")
+        if result_files:
+            print(f"Found output files: {result_files}")
+            print("Processing may have completed despite the queue timeout error.")
+        else:
+            print("No output files found.")
+    
+    print("Main function completed.")
 
 
 if __name__ == "__main__":

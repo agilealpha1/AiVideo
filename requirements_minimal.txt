@@ -1,0 +1,46 @@
+# Minimal requirements.txt for HeyGem Digital Human Application
+# This includes only the essential packages to run the application
+# Date: 2025-05-24
+
+# Core ML and Computer Vision
+torch==1.11.0+cu113
+torchaudio==0.11.0+cu113
+torchvision==0.12.0+cu113
+onnxruntime==1.19.2
+opencv-python==4.7.0.72
+cv2box==0.5.9
+
+# Core numerical computing
+numpy==1.21.6
+scipy==1.7.1
+
+# Image processing
+Pillow==9.1.1
+scikit-image==0.19.3
+
+# Audio processing
+librosa==0.8.1
+SoundFile==0.10.3.post1
+
+# Machine Learning
+transformers==4.6.1
+huggingface-hub==0.30.2
+
+# 3D Graphics
+pyrender==0.1.45
+trimesh==3.12.7
+PyOpenGL==3.1.0
+
+# Web Interface
+gradio==4.44.1
+Flask==3.0.3
+
+# Utilities
+tqdm==4.64.0
+requests==2.32.3
+PyYAML==6.0
+
+# Special compatibility package
+apstone==0.0.8
+
+# Note: Install with CUDA compatibility fixes in app.py and run.py 

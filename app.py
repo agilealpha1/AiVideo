@@ -3,6 +3,16 @@ import gc
 import json
 import os
 
+# Force CPU usage to avoid CUDA compatibility issues
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+os.environ["TORCH_USE_CUDA_DSA"] = "0"
+os.environ["CUDA_LAUNCH_BLOCKING"] = "0"
+os.environ["TORCH_DEVICE"] = "cpu"
+os.environ["PYTORCH_ENABLE_MPS_FALLBACK"] = "1"
+os.environ["OMP_NUM_THREADS"] = "1"
+# Disable ONNX Runtime GPU providers
+os.environ["ORT_DISABLE_GPU"] = "1"
+
 os.environ["GRADIO_SERVER_NAME"] = "0.0.0.0"
 import subprocess
 import threading
@@ -22,6 +32,22 @@ import service.trans_dh_service
 from h_utils.custom import CustomError
 from y_utils.config import GlobalConfig
 from y_utils.logger import logger
+
+# Additional PyTorch CPU forcing after imports
+try:
+    import torch
+    torch.cuda.is_available = lambda: False
+    # Force all tensors to CPU
+    original_tensor_to = torch.Tensor.to
+    def force_cpu_to(self, *args, **kwargs):
+        if len(args) > 0 and hasattr(args[0], 'type') and 'cuda' in str(args[0]).lower():
+            args = ('cpu',) + args[1:]
+        if 'device' in kwargs and 'cuda' in str(kwargs['device']).lower():
+            kwargs['device'] = 'cpu'
+        return original_tensor_to(self, *args, **kwargs)
+    torch.Tensor.to = force_cpu_to
+except ImportError:
+    pass
 
 
 def write_video_gradio(

@@ -1,0 +1,140 @@
+# GPU Optimization Project - HeyGem Digital Human
+# .gitignore file for clean repository management
+
+# Virtual Environments
+venv/
+venv_gpu/
+env/
+ENV/
+.venv/
+.env
+
+# Python Cache Files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Model Files (Large binary files)
+*.pth
+*.onnx
+*.h5
+*.pkl
+*.bin
+*.safetensors
+pretrain_models/
+landmark2face_wy/checkpoints/anylang/
+model_lib/
+xseg/
+
+# Generated Output Files
+*_format.wav
+*_format.mp4
+*-t.mp4
+*-r.mp4
+*.wav
+*.mp4
+*.avi
+*.mov
+
+# Logs
+log/
+logs/
+*.log
+
+# Temporary Files
+tmp/
+temp/
+.tmp/
+.temp/
+
+# IDE Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Gradio temporary files
+/tmp/
+flagged/
+
+# Model cache directories
+.cache/
+cache/
+
+# Experiment directories
+exp/
+experiments/
+results/
+
+# Face detection resources
+face_detect_utils/resources/
+face_attr_detect/*.onnx
+
+# PyTorch JIT
+*.pt
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# celery beat schedule file
+celerybeat-schedule
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json 

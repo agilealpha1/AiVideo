@@ -1,0 +1,51 @@
+# GPU requirements.txt for HeyGem Digital Human Application (FIXED)
+# This version resolves NumPy dependency conflicts for RTX 3070 compatibility
+# Date: 2025-05-24
+
+# Core ML and Computer Vision (GPU versions already installed)
+# torch==2.0.1+cu118
+# torchaudio==2.0.2+cu118  
+# torchvision==0.15.2+cu118
+
+# ONNX Runtime (GPU compatible)
+onnxruntime-gpu==1.19.2
+opencv-python==4.7.0.72
+cv2box==0.5.9
+
+# Core numerical computing (compatible versions)
+numpy>=1.21.6,<1.23.0
+scipy>=1.7.1,<1.8.0
+
+# Image processing
+Pillow>=9.1.1
+scikit-image>=0.19.3
+
+# Audio processing
+librosa>=0.8.1
+SoundFile>=0.10.3.post1
+
+# Machine Learning
+transformers>=4.6.1
+huggingface-hub>=0.30.2
+
+# 3D Graphics
+pyrender>=0.1.45
+trimesh>=3.12.7
+PyOpenGL>=3.1.0
+
+# Web Interface
+gradio>=4.44.1
+Flask>=3.0.3
+
+# Utilities
+tqdm>=4.64.0
+requests>=2.28.1
+PyYAML>=6.0
+
+# Special compatibility package
+apstone>=0.0.8
+
+# Additional dependencies that might be needed
+numba>=0.55.2
+numexpr>=2.8.6
+cffi 
