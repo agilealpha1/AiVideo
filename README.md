@@ -229,6 +229,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🙏 **Acknowledgments**
 
 - Original HeyGem Digital Human team for the base application
+- [@Holasyb918/HeyGem-Linux-Python-Hack](https://github.com/Holasyb918/HeyGem-Linux-Python-Hack) - Docker-free Linux Python implementation
+- [@duixcom/Duix.Heygem](https://github.com/duixcom/Duix.Heygem) - Enhanced HeyGem implementation
 - NVIDIA for CUDA toolkit and GPU optimization guides
 - PyTorch team for GPU acceleration framework
 - Gradio team for the excellent web interface framework
